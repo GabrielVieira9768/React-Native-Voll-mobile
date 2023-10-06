@@ -1,49 +1,49 @@
-import { VStack, Image, Text, Box, FormControl, Input, Button, Link } from 'native-base'
+import { Image, Checkbox , ScrollView, Box, Text } from 'native-base'
 import { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
 import Logo from './assets/Logo.png'
 import { Titulo, Botao, EntradaTexto } from './componentes/components'
+import { secoes } from './utils/cadastro-entradaTexto'
 
 export default function Cadastro() {
   const [numSecao, setNumSecao] = useState(0);
-  const secoes = [
-    {
-      id: 1,
-      titulo: 'Insira algus dados básicos',
-      entradaTexto: [
-        {
-          id: 1,
-          label: 'Nome',
-          placeholder: 'Digite seu nome completo'
-        },
-        {
-          id: 2,
-          label: 'Email',
-          placeholder: 'Digite seu endereço de email'
-        }
-      ]
+
+  function avancarSecao(){
+    if(numSecao < secoes.length - 1){
+      setNumSecao(numSecao+1)
     }
-  ]
+  }
+
+  function voltarSecao(){
+    if(numSecao > 0){
+      setNumSecao(numSecao-1)
+    }
+  }
 
   return (
-    <VStack flex={1} alignItems="center" justifyContent="center" p={5}>
-      <Image source={Logo} alt="Logo Voll" />
+    <ScrollView flex={1} p={5}>
+      <Image source={Logo} alt="Logo Voll" alignSelf="center" mt={2} />
 
-      <Titulo>{ secoes[0].titulo }</Titulo>
+      <Titulo>{ secoes[numSecao].titulo }</Titulo>
 
       <Box>
         {
-          secoes[0].entradaTexto.map(entrada => {
+          secoes[numSecao].entradaTexto?.map(entrada => {
             return <EntradaTexto label={entrada.label} placeholder={entrada.placeholder} key={entrada.id} />
           })
         }
+        { numSecao === 2 && <Text color="blue.800" fontWeight="bold" fontSize="md" mt={4} mb={3}>Selecione o plano:</Text> }
+        {
+          secoes[numSecao].checkbox?.map(checkbox => {
+            return <Checkbox value={checkbox.value} key={checkbox.id} mt={0.5}>
+              {checkbox.value}
+            </Checkbox>
+          })
+        }
       </Box>
-      
-      <Botao>Avançar</Botao>
-    </VStack>
-  );
-}
 
-function UseState(arg0: number): [any, any] {
-  throw new Error('Function not implemented.');
+      { numSecao > 0 && <Botao onPress={ () => voltarSecao() } backgroundColor="gray.400" mb={-4}>Voltar</Botao> }
+      { numSecao < 2 && <Botao onPress={ () => avancarSecao() } mb={16}>Avançar</Botao> }
+      { numSecao === 2 && <Botao onPress={ () => avancarSecao() } mb={16}>Finalizar</Botao> }
+    </ScrollView>
+  );
 }
